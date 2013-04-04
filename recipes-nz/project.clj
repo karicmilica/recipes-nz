@@ -11,4 +11,4 @@
                  [enlive "1.1.1"]
                  [org.clojure/data.json "0.2.1"]
                  [com.novemberain/monger "1.4.2"]]
-:main recipes_nz.core)
+:main server.server)
