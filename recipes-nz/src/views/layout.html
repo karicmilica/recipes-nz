@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+		<link href="/css/default.css" rel="stylesheet" type="text/css"/>
+		<link href="/css/cssLayout.css" rel="stylesheet" type="text/css"/>
+		<link href="/css/stars.css" rel="stylesheet" type="text/css">
+    <script src="/js/jquery-1.7.1.min.js"></script>
+    <script language="javascript">
+    
+function vote(amnt){
+    
+	$.ajax({
+		type: 'POST',
+		url: 'http://localhost:8080/rate',
+		data: { 
+        'amount': amnt,
+        'recipeid': $('#recipeId').val()
+    },
+		success: function(data, textStatus, jqXHR){
+			$('#current-rating').width(data.width);
+			$('#current-rating-result').html(data.status);
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			alert('error: ' + textStatus);
+		}
+	});	
+}
+</script>
+		<title>Recipes</title>
+	</head>
+	<body>
+		<div id="top">
+			<h1><i>Recipes</i></h1>
+		</div>
+		<div id="center_div">
+			<div id="left"/>
+			<div>
+				<div id="right"/>
+				<div id="content" class="right_content">
+					
+					
+					
+     
+					
+				</div>
+			</div>
+		</div>
+		<div id="bottom"/>
+		
+		
+	</body>
+</html>
