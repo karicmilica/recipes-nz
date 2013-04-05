@@ -54,3 +54,7 @@
     [:#left] (html/content (menu-snippet categories))
     [:#content] (html/content (recipe-snippet recipe))
     )
+
+(html/deftemplate registration-template "views/register.html"
+ [title]
+   [:title] (html/content title))

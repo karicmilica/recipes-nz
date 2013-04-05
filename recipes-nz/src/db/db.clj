@@ -22,3 +22,11 @@
     results-with-href))
 
 (defn findRecipeById [id] (mc/find-map-by-id "recipes" (ObjectId. id)))
+
+
+(defn login [username password]
+  (mc/find-one-as-map "users" {:username username :password password}))
+
+(defn register [username password name email]
+  (mc/insert-and-return "users" {:username username :password password :name name
+                      :email email}))
