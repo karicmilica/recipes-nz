@@ -4,7 +4,8 @@
             [noir.session :as session]
             [noir.response :as resp]
             [views.views :as views]
-            [noir.core :refer [defpage defpartial]]))
+            [noir.core :refer [defpage defpartial]]
+            [utils.util :as util]))
 
 (defn start-server [] (server/start 8080)
   (db/db-init))
@@ -38,6 +39,12 @@
 
 (defpage "/register" {}
   (views/registration-template "Register"))
+
+(defpage [:post "/rate"] {:keys [amount recipeid]}
+  (let [userId (:_id (session/get :user))
+        amnt (util/String->Number amount)]
+  (db/addRecipeRatingForUser userId recipeid amnt) 
+  (resp/json {"width" (* amnt 25), "status" (str "Your vote of " amount " was successful!")})))
 
 (defn -main [& args]
   (start-server))

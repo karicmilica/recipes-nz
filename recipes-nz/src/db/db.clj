@@ -30,3 +30,7 @@
 (defn register [username password name email]
   (mc/insert-and-return "users" {:username username :password password :name name
                       :email email}))
+
+(defn addRecipeRatingForUser [userId recipeId rate]
+  (mc/update-by-id "users" userId
+                   {$set {(str "recipesRatings." recipeId) rate}}))
