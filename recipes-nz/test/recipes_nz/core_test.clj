@@ -1,7 +1,5 @@
 (ns recipes-nz.core-test
   (:use clojure.test
-        recipes-nz.core))
+        recipes_nz.core
+        utils.util))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
