@@ -5,7 +5,8 @@
 		width: 125px;
 		height: 25px;
 		position: relative;
-		background: url(/images/alt_star.gif) top left repeat-x;		
+		background: url(/images/alt_star.gif) top left repeat-x;
+		border: 1px solid black; 		
 	}
 	.star-rating li{
 		padding:0px;

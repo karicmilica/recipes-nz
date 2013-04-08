@@ -1,18 +1,22 @@
 #top {
     position: relative;
-    background-color: green;
+    background-color: #B0D27D;
     color: white;
     padding: 5px;
     margin: 0px 0px 10px 0px;
-    border-style:solid;
+    border: 3px solid black; 
 }
 
 #bottom {
 
     position: relative;
-    background-color: green;
+    background-color: #B0D27D;
     padding: 5px;
     margin: 10px 0px 0px 0px;
+    min-height:50px;
+     height:auto !important;
+     height:50px;
+     border: 3px solid black; 
 }
 
 #left {
@@ -45,6 +49,11 @@
     background-color: #dddddd;
     padding: 5px;
     margin: 0px 200px 0px 200px;
+    min-height:550px;
+     height:auto !important;
+     height:550px; 
+     border-left: 2px solid black;
+     border-right: 2px solid black;
 }
 
 #top a:link, #top a:visited {

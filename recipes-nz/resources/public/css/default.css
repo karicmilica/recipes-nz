@@ -9,21 +9,24 @@ body {
 h1 {
     font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
     border-bottom: 1px solid #AFAFAF; 
-    font-size:  48px;
+    font-size:  52px;
     font-weight: bold;
     margin: 0px;
     padding: 0px;
-    color: #D20005;
+    color: #AB220A;
+    text-align:center
 }
 
 a:link, a:visited {
-  color: #045491;
+  color: #27313E;
   font-weight : bold;
   text-decoration: none;
 }
 
 a:link:hover, a:visited:hover  {
-  color: #045491;
+  color: #27313E;
   font-weight : bold;
   text-decoration : underline;
 }
+
+
