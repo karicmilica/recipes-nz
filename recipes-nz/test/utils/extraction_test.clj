@@ -21,4 +21,32 @@
     (is (= (:utils.util-extraction/paused (meta a)) true)))))
 
 
+(deftest test-get-ratings
+  (testing "FIXME, I fail."
+  (is (= (get-rating '({:tag :p, :attrs {:class "author comments"}, :content ("\n        " {:tag :b, :attrs nil, :content ("            robert's        ")} " \n                    Review | Rating " {:tag :span, :attrs {:alt "5 star rating", :class "rating_star_5 star-display"}, :content nil} "\n")} {:tag :p, :attrs {:class "author comments"}, :content ("\n        " {:tag :b, :attrs nil, :content ("            Maryanne's        ")} " \n                    Review | Rating " {:tag :span, :attrs {:alt "3 star rating", :class "rating_star_3 star-display"}, :content nil} "\n")}) 36) 
+       {"Maryanne" {36 3}, "robert" {36 5}} ))))
+
+
+(deftest test-num-filter
+  (is (= (num-filter "5 star rating") "5")))
+
+(deftest test-prepare-json
+  (testing "FIXME, I fail."
+  (is (= (prepareJson "{\n                        
+                 \"@type\": \"http://data-vocabulary.org/RecipeIngredient\", \n                        
+                  \"http://data-vocabulary.org/amount\": \"250 - 300g  \", \n                       
+                   \"http://data-vocabulary.org/name\": \"Tegel Thin Cut Boneless Skinless Chicken Breast \"\n                    }") 
+       {:type "RecipeIngredient", :amount "250 - 300g  ", :name "Tegel Thin Cut Boneless Skinless Chicken Breast "} ))))
+
+(deftest test-definerecipe-ingredient-categories
+  (testing "FIXME, I fail."
+  (is (= (defineIngredientCategory "sesame seeds (optional) lite sour cream tegel thin cut boneless 
+                                    skinless chicken breast sheets filo pastry finely chopped parsley 
+                                    butter, melted spring onions, sliced or ½ onion, diced wattie's cream style corn "
+                                    '({:_id 1, :name "chicken"} 
+                                       {:_id 3, :name "potato"} 
+                                         {:_id 5, :name "tomato"})) 
+                                    '(1)
+         ))))
+           
 (run-tests)

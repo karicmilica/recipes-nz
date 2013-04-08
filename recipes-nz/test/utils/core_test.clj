@@ -11,5 +11,8 @@
 
 
 
+(deftest test-substring?
+  (is (= (substring? "chicken" "chicken breasts, boneless, skinless with fillet removed") true)))
+
 
 (run-tests)
