@@ -9,7 +9,7 @@
                                   articles))
 
 (defn pause
-      ([a] (alter-meta! a assoc ::paused true)))
+      [a] (alter-meta! a assoc ::paused true))
 
 (defn paused? [agent] (::paused (meta agent)))
 
@@ -48,7 +48,7 @@
                                                  :summary (:summary data)
                                                  :recipeYield (:yield data)
                                                  :instructions (:instructions data)
-                                                 :ingredients (map #(:name %) (:ingredient data))
+                                                 :ingredients (map #(str (:amount %)  (:name %)) (:ingredient data))
              :ingredient-categories  (defineIngredientCategory (clojure.string/lower-case (apply str (map #(:name %) (:ingredient data)))) ingredientcategories)))
 
 (defn processData [data ingredientcategories] (extractRecipe (getData (prepareJson data)) ingredientcategories))
