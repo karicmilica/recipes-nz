@@ -34,3 +34,4 @@ http://www.foodinaminute.co.nz/Recipe-Categories/Easy-Dessert-Recipes/%28offset%
 http://www.foodinaminute.co.nz/Recipe-Categories/Easy-Dessert-Recipes/%28offset%29/60
 http://www.foodinaminute.co.nz/Recipe-Categories/Easy-Dessert-Recipes/%28offset%29/80
 http://www.foodinaminute.co.nz/Recipe-Categories/Easy-Dessert-Recipes/%28offset%29/100
+http://www.foodinaminute.co.nz/Recipes
