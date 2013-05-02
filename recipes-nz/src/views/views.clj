@@ -82,6 +82,10 @@
     )
 
 (html/deftemplate registration-template "views/register.html"
- [title]
-   [:title] (html/content title))
+ ([title msg]
+   [:title] (html/content title)
+   [:#msg] (html/content msg))
+ ([title]
+   [:title] (html/content title)
+   [:#msg] (html/content "")))
 

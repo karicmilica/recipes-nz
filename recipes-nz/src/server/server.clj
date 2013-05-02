@@ -13,7 +13,9 @@
 (def firstIngrId (atom ""))
 (defn start-server [] (server/start 8080)
   (db/db-init)
-  (compare-and-set! firstIngrId "" (.toString (:_id (first(db/getIngredientCategories))))))
+  (Thread/sleep 2000)
+  (compare-and-set! firstIngrId "" (.toString (:_id (first(db/getIngredientCategories)))))
+  (println "id" @firstIngrId))
 
 (defpage "/login" {}
          (views/login-template "Login"))
@@ -47,6 +49,7 @@
 
 
 (defn successfulLogin [user] 
+  (println @firstIngrId) 
   (session/put! :user user) (resp/redirect (str "/search/" @firstIngrId "/")))
 
 
@@ -57,8 +60,12 @@
 
 (defpage [:post "/register"] {:keys [username password name email]}
   (let [user (db/register username password name email)]
-    (if (nil? user) (resp/redirect "/register")
-  (successfulLogin user))))
+   (if (nil? user) 
+   (views/registration-template "Register"  
+                                (str "This username already exists '" username "', please choose another one.") )
+   (successfulLogin user)
+   )
+  ))
 
 (defpage "/register" {}
   (views/registration-template "Register"))
@@ -86,4 +93,5 @@
   
 
 (defn -main [& args]
-  (start-server))
+  (start-server)
+  )
