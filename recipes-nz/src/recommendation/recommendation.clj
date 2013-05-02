@@ -4,10 +4,11 @@
 
 
 (defn similarities [prefs user sim-algo]
-   (reduce 
-    (fn[l p]  (let [v (sim-algo (prefs user) (second p))] 
-                (if (> v 0) (conj l [(first p) v]) l))) 
-    '() (dissoc prefs user)))
+      (let [m (dissoc prefs user)
+            prefUser (prefs user)]
+        (filter #(> (second %) 0)
+          (apply assoc {} (interleave (keys m)  (map #(sim-algo prefUser  %) (vals m))
+                    )))))
 
 (defn prepareUsersForAlg [users] 
         (reduce (fn [m x] (assoc m (:username x) (:recipeRatings x) )) {} users))
@@ -19,9 +20,9 @@
      (let [other (first v)
            sim (second v)
            diff (filter #(nil? ((prefs user) (key %))) (prefs other))
-           wpref (apply assoc {}
+           wpref (if (> (count diff) 0) (apply assoc {}
                                 (interleave (keys diff) 
-                                            (map #(* % sim) (vals diff))))]
+                                            (map #(* % sim) (vals diff)))) {})]
        (assoc hm other wpref))) {} sim-users))
 
 (defn sum-scrs [wprefs]
