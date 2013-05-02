@@ -18,6 +18,10 @@
   (apply list (map #(clojure.string/trim %) (line-seq (reader "urls.txt"))))
   ) 
 
+(def ingrs '({:name "chicken"} {:name "potato"} {:name "beef"} {:name "egg"} 
+             {:name "bean"} {:name "pork"} {:name "pasta"}  {:name "bacon"} 
+             {:name "fish"} {:name "chocolate"} )) 
+
 (declare get-url-search)
 (declare process-search)
 (declare handle-results-search)
@@ -46,7 +50,7 @@
 
 (defn run-agents [ags]
             (fn [a] (when (ags a)
-            (send a (fn [{transition ::t :as state}]
+            (send a (fn [state]
             (when-not (utile/paused? *agent*)
             ((dispatch state) *agent*) )
             state)))))
@@ -127,7 +131,7 @@
               (setFlagTrue flag)	
                           {::t ::getUrlRecipe :queue url-queue})
 
-(declare ingredient-category)
+(declare ingredient-categories)
 
 
 
@@ -164,7 +168,7 @@
          (try
            (let [html-content (html/html-resource (java.io.StringReader. pageContent))
                  id (ObjectId.)
-                 recipe (utile/processData content @ingredient-category)]
+                 recipe (utile/processData content @ingredient-categories)]
          {:url url
           ::t ::handleResultsRecipe
           :usersRating (utile/get-rating (utile/get-rating-div html-content) (.toString id)) 
@@ -197,18 +201,23 @@
 (defn prepareUsersForDB [users] 
      (reduce (fn [l x] (conj l {:username (key x) :recipeRatings (into {} (val x))} )) '() users))
 
+(defn prepareDB [ingrs]
+  (db/formatDB)
+  (db/insertIngredients ingrs)) 
 
 (defn runScraper []
-  (def urls2 (atom (readUrls)))
   (db/db-init)
-  (def ingredient-category (atom (mc/find-maps "ingredient")))
+  (prepareDB ingrs) 
+  (def urls2 (atom (readUrls)))
+  (def ingredient-categories (atom (mc/find-maps "ingredient")))
   (Thread/sleep 3000)
+  (println (count @ingredient-categories))
   (println (count @urls2))
   (runLinkExtraction) 
    (runRecipesExtraction)
   (Thread/sleep 100000)
   (.put url-queue "END")
-   (Thread/sleep 330000)
+   (Thread/sleep 320000)
   
   
    
@@ -216,22 +225,22 @@
   (doseq [a agents] (utile/pause a))
   
   (println (.size url-queue))
-  (println agents) 
   (println "users: " (count @users))
   (println "crawled: " (count @crawled-urls))
   
   (doseq [u (prepareUsersForDB (filter #(> (count (val %)) 2) @users))] 
     (db/addUser u))
+  (println "finished")
   )
 
-(defn runCrawler []
-  (def urls2 (atom (readUrls)))
-  (println (count @urls2))
-  (runLinkExtraction)
-  (Thread/sleep 20000)
+;(defn runCrawler []
+  ;(def urls2 (atom (readUrls)))
+  ;(println (count @urls2))
+  ;(runLinkExtraction)
+  ;(Thread/sleep 20000)
   
-  (println (count @urls2))
-  (println (.size url-queue)))
+  ;(println (count @urls2))
+  ;(println (.size url-queue)))
 
 (defn -main [& args]
 (runScraper))
