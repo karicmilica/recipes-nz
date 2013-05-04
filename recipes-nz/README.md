@@ -1,13 +1,7 @@
 # recipes-nz
 
-A Clojure library designed to ... well, that part is up to you.
-
-## Usage
-
-FIXME
-
-## License
-
-Copyright © 2013 FIXME
-
-Distributed under the Eclipse Public License, the same as Clojure.
+- to compile clojurescript, lauch lein cljsbuild once from the terminal
+- to fill database with recipes, set :main to extraction.recipe_extractor in project.clj and
+  lauch lein run from the terminal
+- to start web-application lauch set :main to server.server in project.clj and
+  lauch lein run from the terminal
