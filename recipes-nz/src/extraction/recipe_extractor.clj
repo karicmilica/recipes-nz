@@ -8,11 +8,17 @@
   (:import (org.bson.types ObjectId))
   (:import (java.util.concurrent LinkedBlockingQueue BlockingQueue)))
 
+; 1 - get pagination links
+; 2 - get recipe links
+; 3 - get recipes and their rates
+
+
 (def users (atom {}))
-(def url-queue (LinkedBlockingQueue.))
-
-
-
+(def url-queue1 (LinkedBlockingQueue.))
+(def url-queue2 (LinkedBlockingQueue.))
+(declare urls) 
+(declare runPagLinkExtraction)
+(declare dequeue!) 
 
 (defn readUrls []
   (apply list (map #(clojure.string/trim %) (line-seq (reader "urls.txt"))))
@@ -22,6 +28,40 @@
              {:name "bean"} {:name "pork"} {:name "pasta"}  {:name "bacon"} 
              {:name "fish"} {:name "chocolate"} )) 
 
+
+; start 1
+(defn handle-results-pag
+         [{:keys [links-recipes]}]
+         (try
+         (doseq [url links-recipes]
+         (.put url-queue1 url))
+         {::t ::getUrlPag}
+         (finally (runPagLinkExtraction *agent*))))
+
+(defn process-pag
+            [{:keys [content url]}]
+            (try
+   (let [html-content (html/html-resource (java.io.StringReader. content))
+            pags (html/select html-content [:p.pagination :a])]
+            {::t ::handleResultsPag
+            :links-recipes (utile/get-pag-links pags url)
+            }
+   )
+            (finally (runPagLinkExtraction *agent*))))
+
+(defn get-url-pag [{:keys [] :as state}]
+         (let [url (dequeue! urls *agent*)]
+         (try
+         {:url url
+         :content (slurp url)
+         ::t ::processPag}
+         (catch Exception e
+           state 
+         )
+         (finally (runPagLinkExtraction *agent*)))))
+
+;end
+
 (declare get-url-search)
 (declare process-search)
 (declare handle-results-search)
@@ -30,6 +70,16 @@
 (declare handle-results)
 
 (defmulti dispatch ::t)
+
+(defmethod dispatch ::getUrlPag [transition]
+  (fn [ag] (send-off ag get-url-pag))) 
+
+(defmethod dispatch ::handleResultsPag [transition]
+  (fn [ag] (send-off ag handle-results-pag)))
+
+(defmethod dispatch ::processPag [transition]
+  (fn [ag] (send ag process-pag)))
+
 (defmethod dispatch ::getUrlSearch [transition]
   (fn [ag] (send-off ag get-url-search))) 
 
@@ -57,7 +107,13 @@
 
 
 (declare get-url-search)
-(declare urls2)
+
+(defn setFlagTrue [arg] (compare-and-set! arg false true))
+(def flag1 (atom false))
+(def flag2 (atom false))
+(defn stop [state flag] 
+              (setFlagTrue flag)	
+                          state)
 
 (defn dequeue!
         [queue ag]
@@ -72,20 +128,25 @@
               (recur))))))
 
 
-(def agents-search (set (repeatedly 5 #(agent {::t ::getUrlSearch}))))
+(def agents-search (set (repeatedly 5 #(agent {::t ::getUrlSearch :queue url-queue1}))))
+(def agents-pag (set (repeatedly 3 #(agent {::t ::getUrlPag}))))
 
-(defn runLinkExtraction
-         ([] (doseq [a agents-search] (runLinkExtraction a)))
+(defn runPagLinkExtraction
+         ([] (doseq [a agents-pag] (runPagLinkExtraction a)))
+         ([a] ((run-agents agents-pag) a)))
+
+(defn runRecipeLinkExtraction
+         ([] (doseq [a agents-search] (runRecipeLinkExtraction a)))
          ([a] ((run-agents agents-search) a)))
 
-
+; start 2
 (defn handle-results-search
          [{:keys [links-recipes]}]
          (try
          (doseq [url links-recipes]
-         (.put url-queue url))
-         {::t ::getUrlSearch}
-         (finally (runLinkExtraction *agent*))))
+         (.put url-queue2 url))
+         {::t ::getUrlSearch :queue url-queue1}
+         (finally (runRecipeLinkExtraction *agent*))))
 
 (defn process-search
             [{:keys [content]}]
@@ -96,28 +157,31 @@
             :links-recipes (utile/get-links articles)
             }
    )
-            (finally (runLinkExtraction *agent*))))
+            (finally (runRecipeLinkExtraction *agent*))))
 
-(defn get-url-search [{:keys [] :as state}]
-         (let [url (dequeue! urls2 *agent*)]
+(defn get-url-search [{:keys [queue] :as state}]
+      (if (= @flag1 true) 
+         (utile/pause *agent*)
+         (let [url (.take queue)]
          (try
+           (if (= "END" url)
+                   (stop state flag1)
          {:url url
          :content (slurp url)
-         ::t ::processSearch}
+         ::t ::processSearch})
          (catch Exception e
            state 
          )
-         (finally (runLinkExtraction *agent*)))))
+         (finally (runRecipeLinkExtraction *agent*))))))
+
+;end 2
 
 
-
-(def flag (atom false))
 
 (def crawled-urls (atom #{}))
 
 
 
-(defn setFlagTrue [arg] (compare-and-set! arg false true))
 
 (defn prepareLink [link] (str "http://www.w3.org/2012/pyMicrodata/extract?format=json&uri="
                                     link))
@@ -125,11 +189,9 @@
 
 
 
-(def agents (set (repeatedly 10 #(agent {::t ::getUrlRecipe :queue url-queue}))))
+(def agents (set (repeatedly 10 #(agent {::t ::getUrlRecipe :queue url-queue2}))))
 
-(defn stop [] 
-              (setFlagTrue flag)	
-                          {::t ::getUrlRecipe :queue url-queue})
+
 
 (declare ingredient-categories)
 
@@ -153,13 +215,14 @@
            (db/addRecipe recipe)
          (swap! users (partial merge-with concat) usersRating))
 
+; start 3
 (defn handle-results
          [{:keys [recipe usersRating url]}]
          (try
            (if-not (@crawled-urls url) 
            (store-results url recipe usersRating))
          {::t ::getUrlRecipe
-          :queue url-queue}
+          :queue url-queue2}
          (finally (runRecipesExtraction *agent*))))
 
 
@@ -179,12 +242,12 @@
 
 (defn  get-url
                [{:keys [^BlockingQueue queue] :as state}]
-               (if (= @flag true) 
+               (if (= @flag2 true) 
                  (utile/pause *agent*) 
                (let [urlstr (.take queue)]
                (try
                  (if (= "END" urlstr)
-                   (stop)
+                   (stop state flag2 )
                    (let [url (clojure.java.io/as-url urlstr)] 
                      (if (@crawled-urls url)
                    {::t ::getUrlRecipe
@@ -197,6 +260,7 @@
                   state
                )
                (finally (runRecipesExtraction *agent*))))))
+; end 3
 
 (defn prepareUsersForDB [users] 
      (reduce (fn [l x] (conj l {:username (key x) :recipeRatings (into {} (val x))} )) '() users))
@@ -208,25 +272,33 @@
 (defn runScraper []
   (db/db-init)
   (prepareDB ingrs) 
-  (def urls2 (atom (readUrls)))
+  
+  (def urls (atom (readUrls)))
   (def ingredient-categories (atom (mc/find-maps "ingredient")))
   (Thread/sleep 3000)
   (println (count @ingredient-categories))
-  (println (count @urls2))
-  (runLinkExtraction) 
-   (runRecipesExtraction)
+  
+  (println (count @urls)) 
+  (runPagLinkExtraction)
+  (runRecipeLinkExtraction) 
+  (Thread/sleep 20000)
+  (.put url-queue1 "END") 
+  (runRecipesExtraction)
+  
+   
   (Thread/sleep 100000)
-  (.put url-queue "END")
-   (Thread/sleep 320000)
+  (.put url-queue2 "END")
+   (Thread/sleep 230000)
   
   
    
-  
+  ;(doseq [a agents] (println (agent-error a)))
   (doseq [a agents] (utile/pause a))
-  
-  (println (.size url-queue))
+  (println  url-queue1)
+  (println "1" (.size url-queue1))
+  (println "2" (.size url-queue2))
   (println "users: " (count @users))
-  (println "crawled: " (count @crawled-urls))
+  (println "recipes: " (count @crawled-urls))
   
   (doseq [u (prepareUsersForDB (filter #(> (count (val %)) 2) @users))] 
     (db/addUser u))
@@ -234,13 +306,23 @@
   )
 
 ;(defn runCrawler []
-  ;(def urls2 (atom (readUrls)))
-  ;(println (count @urls2))
-  ;(runLinkExtraction)
+  ;(def urls (atom (readUrls)))
+  ;(println (count @urls)) 
+
+  ;(runPagLinkExtraction)
+ ; (runRecipeLinkExtraction) 
+ ; (Thread/sleep 20000)
+  ;(.put url-queue1 "END") 
   ;(Thread/sleep 20000)
+ ; (println (count @urls))
   
-  ;(println (count @urls2))
-  ;(println (.size url-queue)))
+  ;(println url-queue1)
+;(println "url-queue1" (.size url-queue1))
+  ;(println "url-queue2" (.size url-queue2))
+  ;(doseq [a agents-search] (utile/pause a))
+  ;(doseq [a agents-search]
+    ;(println (utile/paused? a)))
+ ; )
 
 (defn -main [& args]
 (runScraper))

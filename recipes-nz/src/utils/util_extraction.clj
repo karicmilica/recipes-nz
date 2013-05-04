@@ -52,3 +52,25 @@
              :ingredient-categories  (defineIngredientCategory (clojure.string/lower-case (apply str (map #(:name %) (:ingredient data)))) ingredientcategories)))
 
 (defn processData [data ingredientcategories] (extractRecipe (getData (prepareJson data)) ingredientcategories))
+
+(defn get-pag-links [pags url]
+  (let [l  (filter #(nil? (:class (:attrs %))) pags)
+        l1 (map #(:href (:attrs %)) l)
+        l2 (map #(util/String->Number (first (:content %))) l)
+        last-num (last l2)
+         ]
+    (if (< (count l1) 3)
+            (conj l1 url)
+           (let [b-last-num (nth l2 (- (count l) 2))
+                ]
+             (if (= 1 (- last-num b-last-num))
+               (conj l1 url)
+                (let [range-nums(range (* b-last-num 20) (* (- last-num 1) 20) 20)
+                      other-urls (map #(str "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/" %) range-nums)]
+                    (conj (concat l1 other-urls) url)
+                  )
+               )
+             )) 
+
+  )
+  )

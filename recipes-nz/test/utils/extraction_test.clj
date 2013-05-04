@@ -48,5 +48,50 @@
                                          {:_id 5, :name "tomato"})) 
                                     '(1)
          ))))
+
+(deftest test-get-pag-links
+  (testing "FIXME, I fail."
+  (are [x y] (= x y) (get-pag-links '({:tag :a, :attrs {:href "#", :class "active"}, :content ({:tag :strong, :attrs nil, :content ("1")})} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/20"}, :content ("2")} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/40"}, :content ("3")} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/60"}, :content ("4")} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/80"}, :content ("5")} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/100"}, :content ("6")} 
+                           {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/120"}, :content ("7")} 
+                           {:tag :a, :attrs {:class "next", :href "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/20"}, :content ("Next")}) 
+                        "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/")
+       '("http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/" 
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/20"
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/40" 
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/60" 
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/80" 
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/100" 
+         "http://www.foodinaminute.co.nz/Recipe-Categories/Chicken-Recipes/(offset)/120") )
+  
+       (get-pag-links '({:tag :a, :attrs {:href "#", :class "active"}, :content ({:tag :strong, :attrs nil, :content ("1")})} 
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/20"}, :content ("2")} 
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/40"}, :content ("3")}
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/60"}, :content ("4")}
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/80"}, :content ("5")}
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/100"}, :content ("6")} 
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/120"}, :content ("7")} 
+                         {:tag :a, :attrs {:href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/240"}, :content ("13")}
+                         {:tag :a, :attrs {:class "next", :href "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/20"}, :content ("Next")})
+                      "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes")
+       '("http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/20" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/40" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/60" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/80" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/100" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/120" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/(offset)/240" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/140" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/160" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/180" 
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/200"
+          "http://www.foodinaminute.co.nz/Recipe-Categories/Healthy-Recipes/%28offset%29/220")
+       
+  ))
            
 (run-tests)
