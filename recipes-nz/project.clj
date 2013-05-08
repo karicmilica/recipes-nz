@@ -4,7 +4,6 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [clj-http "0.6.4"]
                  [clj-enlive-template "0.0.1"]
                  [noir "1.3.0"]
                  [clj-json "0.5.3"]
@@ -15,7 +14,7 @@
                  [org.clojure/data.json "0.2.1"]
                  [com.novemberain/monger "1.4.2"]]
   :plugins [[lein-cljsbuild "0.2.5"]]
-:cljsbuild {:builds
+  :cljsbuild {:builds
               [{:builds nil,
                 :jar true
                 :source-path "src/cljs"
@@ -23,7 +22,6 @@
                            :output-to "resources/public/js/main.js"
                            :optimization :simple
                            :pretty-print true}}]}
-
-:main server.server
-;:main extraction.recipe_extractor
+  :main server.server
+  ;:main extraction.recipe_extractor
 )
