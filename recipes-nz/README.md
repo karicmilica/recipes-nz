@@ -6,14 +6,14 @@ Main functionalities:
  1. filling database with the recipes and their ratings 
  2. providing recipe recommendation to users (web application)
 
-1. First, application finds links to recipes in the specific web pages (https://foodinaminute.co.nz/). 
+1) First, application finds links to recipes in the specific web pages (https://foodinaminute.co.nz/). 
 Then, call service "Microdata to RDF Distiller" to extract recipe data based on recipe url. For every 
 recipe, application extracts ratings and users who rated it. At the end, recipes, users and recipe ratings
 are stored in database (MongoDB).
 Some ideas related to managing agents are taken from book "Clojure Programming" Chas Emerick,Brian Carper,
 and Christophe Grand (Chapter 4. Concurrency and Parallelism - Agents).    
 
-2. Web application allows users to register themselves and log in. When user is logged in, he/she can 
+2) Web application allows users to register themselves and log in. When user is logged in, he/she can 
 rate a recipe. To make recommendations to a user, system determines which users are similar based on 
 their rated recipes. 
 If a user is not logged in, he/she can only search recipes by ingredient. 
