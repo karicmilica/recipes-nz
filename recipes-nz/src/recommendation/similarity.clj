@@ -1,11 +1,10 @@
-(ns recommendation.similarity
-  )
+(ns recommendation.similarity)
 
 (defn euclidean [user1-prefs user2-prefs]
   (let [shared-items (filter user1-prefs (keys user2-prefs))
         result (reduce (fn[s r]
-                   (+ s (Math/pow (- (user1-prefs r) (user2-prefs r)) 2)))
-                      0 shared-items)]
+                         (+ s (Math/pow (- (user1-prefs r) (user2-prefs r)) 2)))
+                       0 shared-items)]
     (if (= (count shared-items) 0)
       0
       (/ 1 (+ 1 result)))))

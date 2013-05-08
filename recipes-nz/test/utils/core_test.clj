@@ -1,13 +1,12 @@
 (ns utils.core-test
   (:use clojure.test
-        utils.util
-        ))
+        utils.util))
 
 
 
 (deftest test-string-to-number
   (testing "FIXME, I fail."
-  (is (= (String->Number "5") 5))))
+           (is (= (String->Number "5") 5))))
 
 
 
