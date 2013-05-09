@@ -36,10 +36,9 @@
           (reduce (fn [v x] (conj v (ObjectId. x))) [] (rc/recommend (:username user))))))))
 
 (defpage "/recipe/:id/" {:keys [id]} 
-  (let [user (session/get :user)]
-    (if (nil? user) 
-      (views/recipe-template (db/findRecipeById id) (db/getIngredientCategories))
-      (views/recipe-template (db/findRecipeById id (:_id user)) (db/getIngredientCategories)))))
+  (if-let [user (session/get :user)] 
+    (views/recipe-template (db/findRecipeById id (:_id user)) (db/getIngredientCategories))
+    (views/recipe-template (db/findRecipeById id) (db/getIngredientCategories))))
 
 
 (defn successfulLogin [user] 
@@ -47,17 +46,16 @@
 
 
 (defpage [:post "/login"] {:keys [username password]}
-  (let [user (db/login username password)]
-    (if (nil? user) (resp/redirect "/login")
-      (successfulLogin user))))
+  (if-let [user (db/login username password)]
+    (successfulLogin user)
+    (resp/redirect "/login")))
 
 (defpage [:post "/register"] {:keys [username password name email]}
-  (let [user (db/register username password name email)]
-   (if (nil? user) 
-     (views/registration-template 
-       "Register"  
-       (str "This username already exists '" username "', please choose another one."))
-     (successfulLogin user))))
+  (if-let [user (db/register username password name email)] 
+    (successfulLogin user)
+    (views/registration-template 
+      "Register"  
+      (str "This username already exists '" username "', please choose another one."))))
 
 (defpage "/register" {}
   (views/registration-template "Register"))
@@ -76,10 +74,9 @@
        :width (str "width: " (* rate 25) "px")}))
 
 (remote/defremote rateRecipe [recipeid rate]
-  (let [user (session/get :user)]
-    (if (nil? user)
-      {:status (str "Please log in!") :width "width: 0px"}
-      (successfulRecipeRate recipeid rate user))))
+  (if-let [user (session/get :user)]
+    (successfulRecipeRate recipeid rate user)
+    {:status (str "Please log in!") :width "width: 0px"}))
   
 
 (defn -main [& args]
