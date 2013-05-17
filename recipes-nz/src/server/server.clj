@@ -10,39 +10,39 @@
             [recommendation.recommendation :as rc])
   (:import (org.bson.types ObjectId)))
 
-(def firstIngrId (atom ""))
+(def first-ingridient-id (atom ""))
 
 (defn start-server []
   (server/start 8080)
   (db/db-init)
   (Thread/sleep 2000)
-  (compare-and-set! firstIngrId "" (.toString (:_id (first(db/getIngredientCategories)))))
-  (println "id" @firstIngrId))
+  (compare-and-set! first-ingridient-id "" (.toString (:_id (first(db/get-ingredient-categories)))))
+  (println "id" @first-ingridient-id))
 
 (defpage "/login" {}
   (views/login-template "Login"))
 
 (defpage "/search/:category/" {:keys [category]} 
   (let [user (session/get :user)
-        recipes (db/findRecipesByCategory category)
-        ingredients (db/getIngredientCategories)]
-    (if (or (nil? user) (< (db/countRatesForUser (:_id user)) 3))
+        recipes (db/find-recipes-by-category category)
+        ingredients (db/get-ingredient-categories)]
+    (if (or (nil? user) (< (db/count-ratings-for-user (:_id user)) 3))
       (views/search-recipes-template "Recipes" recipes ingredients)
       (views/search-recipes-template 
         "Recipes"
         recipes
         ingredients
-        (db/findRecipeByIdForRecommendation 
+        (db/find-recipes-by-ids 
           (reduce (fn [v x] (conj v (ObjectId. x))) [] (rc/recommend (:username user))))))))
 
 (defpage "/recipe/:id/" {:keys [id]} 
   (if-let [user (session/get :user)] 
-    (views/recipe-template (db/findRecipeById id (:_id user)) (db/getIngredientCategories))
-    (views/recipe-template (db/findRecipeById id) (db/getIngredientCategories))))
+    (views/recipe-template (db/find-recipe-by-id id (:_id user)) (db/get-ingredient-categories))
+    (views/recipe-template (db/find-recipe-by-id id) (db/get-ingredient-categories))))
 
 
 (defn successfulLogin [user] 
-  (session/put! :user user) (resp/redirect (str "/search/" @firstIngrId "/")))
+  (session/put! :user user) (resp/redirect (str "/search/" @first-ingridient-id "/")))
 
 
 (defpage [:post "/login"] {:keys [username password]}
@@ -60,22 +60,22 @@
 (defpage "/register" {}
   (views/registration-template "Register"))
 
-;(defpage [:post "/rate"] {:keys [amount recipeid]}
+;(defpage [:post "/rating"] {:keys [amount recipe-id]}
   ;(let [userId (:_id (session/get :user))
     ;    amnt (util/String->Number amount)]
-  ;(db/addRecipeRatingForUser userId recipeid amnt) 
+  ;(db/add-recipe-rating-for-user userId recipe-id amnt) 
   ;(resp/json {"width" (* amnt 25), "status" (str "Your vote of " amount " was successful!")})))
 
-(defn successfulRecipeRate [recipeid rate user]
-  (db/addRecipeRatingForUser (:_id user) recipeid rate)
-  (let [avg (db/averageRecipeRating recipeid)]
-      {:status (str "Your vote of " rate " was successful!")
+(defn successful-recipe-rated [recipe-id rating user]
+  (db/add-recipe-rating-for-user (:_id user) recipe-id rating)
+  (let [avg (db/average-recipe-rating recipe-id)]
+      {:status (str "Your vote of " rating " was successful!")
        :average avg 
-       :width (str "width: " (* rate 25) "px")}))
+       :width (str "width: " (* rating 25) "px")}))
 
-(remote/defremote rateRecipe [recipeid rate]
+(remote/defremote rate-recipe [recipe-id rating]
   (if-let [user (session/get :user)]
-    (successfulRecipeRate recipeid rate user)
+    (successful-recipe-rated recipe-id rating user)
     {:status (str "Please log in!") :width "width: 0px"}))
   
 

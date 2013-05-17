@@ -23,5 +23,5 @@
                            :optimization :simple
                            :pretty-print true}}]}
   :main server.server
-  ;:main extraction.recipe_extractor
+  ;:main extraction.recipe-extractor
 )

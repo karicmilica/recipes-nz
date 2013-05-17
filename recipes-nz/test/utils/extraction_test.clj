@@ -60,7 +60,7 @@
 
 (deftest test-prepare-json
   (testing "FIXME, I fail."
-           (is (= (prepareJson 
+           (is (= (prepare-json 
                     "{\n \"@type\": \"http://data-vocabulary.org/RecipeIngredient\", \n                        
                      \"http://data-vocabulary.org/amount\": \"250 - 300g  \", \n                       
                      \"http://data-vocabulary.org/name\": \"Tegel Thin Cut Boneless Skinless Chicken Breast \"\n                    }") 
@@ -68,7 +68,7 @@
 
 (deftest test-definerecipe-ingredient-categories
   (testing "FIXME, I fail."
-           (is (= (defineIngredientCategory 
+           (is (= (define-ingredient-category 
                     "sesame seeds (optional) lite sour cream tegel thin cut boneless 
                      skinless chicken breast sheets filo pastry finely chopped parsley 
                      butter, melted spring onions, sliced or ½ onion, diced wattie's cream style corn "

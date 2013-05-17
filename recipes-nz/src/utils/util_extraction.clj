@@ -29,18 +29,18 @@
                 (assoc m k {id (util/String->Number v)}))))
           {} divs))
 
-(defn defineIngredientCategory [s l] 
+(defn define-ingredient-category [s l] 
   (map #(:_id %) (filter #(util/substring? (:name %) s) l)))
 
-(defn getData [jsonText] (first (:list (:md:item jsonText))))
+(defn get-data [jsonText] (first (:list (:md:item jsonText))))
 
-(defn prepareJson [body] 
+(defn prepare-json [body] 
   (json/read-str 
     (clojure.string/replace
       (clojure.string/replace body "@" "") "http://data-vocabulary.org/" "")
     :key-fn keyword))
 
-(defn extractRecipe [data ingredientcategories] 
+(defn extract-recipe [data ingredientcategories] 
   (assoc {} 
          :title  (:name data)
          :src (:photo data)
@@ -48,10 +48,10 @@
          :recipeYield (:yield data)
          :instructions (:instructions data)
          :ingredients (map #(str (:amount %)  (:name %)) (:ingredient data))
-         :ingredient-categories  (defineIngredientCategory (clojure.string/lower-case (apply str (map #(:name %) (:ingredient data)))) ingredientcategories)))
+         :ingredient-categories  (define-ingredient-category (clojure.string/lower-case (apply str (map #(:name %) (:ingredient data)))) ingredientcategories)))
 
-(defn processData [data ingredientcategories]
-  (extractRecipe (getData (prepareJson data)) ingredientcategories))
+(defn process-data [data ingredient-categories]
+  (extract-recipe (get-data (prepare-json data)) ingredient-categories))
 
 (defn get-pag-links [pags url]
   (let [l  (filter #(nil? (:class (:attrs %))) pags)

@@ -9,7 +9,7 @@
     (filter #(> (second %) 0)
             (apply assoc {} (interleave (keys m)  (map #(sim-algo prefUser  %) (vals m)))))))
 
-(defn prepareUsersForAlg [users] 
+(defn prepare-users-for-alg [users] 
   (reduce (fn [m x] (assoc m (:username x) (:recipeRatings x) )) {} users))
 
 
@@ -41,7 +41,7 @@
 
 (defn recommend
   ([user]
-    (let [cr (prepareUsersForAlg (db/findUsers))]
+    (let [cr (prepare-users-for-alg (db/find-users))]
       (map #(name (first %)) (take 5 (sort-by second > (partition 2 (recommend cr user sim/euclidean)))))))
   ([prefs user algo]
     (let [similar-users (into {} (similarities prefs user algo))

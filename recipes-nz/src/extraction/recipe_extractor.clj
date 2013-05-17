@@ -1,4 +1,4 @@
-(ns extraction.recipe_extractor
+(ns extraction.recipe-extractor
   (:require 
            [net.cgrand.enlive-html :as html]
            [monger.collection :as mc]
@@ -28,10 +28,10 @@
 (def urls (atom '()))
 (def ingredient-categories (atom '()))
 
-(declare runPagLinkExtraction)
+(declare run-pag-link-extraction)
 (declare dequeue!) 
 
-(defn readUrls []
+(defn read-urls []
   (apply list (map #(clojure.string/trim %) (line-seq (reader "urls.txt"))))) 
 
 
@@ -42,7 +42,7 @@
     (doseq [url links-recipes]
       (.put url-queue1 url))
     {::t ::getUrlPag}
-    (finally (runPagLinkExtraction *agent*))))
+    (finally (run-pag-link-extraction *agent*))))
 
 (defn process-pag [{:keys [content url]}]
   (try
@@ -50,7 +50,7 @@
           pags (html/select html-content [:p.pagination :a])]
       {::t ::handleResultsPag
        :links-recipes (utile/get-pag-links pags url)})
-    (finally (runPagLinkExtraction *agent*))))
+    (finally (run-pag-link-extraction *agent*))))
 
 (defn get-url-pag [state]
   (let [url (dequeue! urls *agent*)]
@@ -60,7 +60,7 @@
        ::t ::processPag}
       (catch Exception e
         state)
-      (finally (runPagLinkExtraction *agent*)))))
+      (finally (run-pag-link-extraction *agent*)))))
 
 ;end
 
@@ -110,12 +110,12 @@
 
 (declare get-url-search)
 
-(defn setFlagTrue [arg] (compare-and-set! arg false true))
+(defn set-flag-true! [arg] (compare-and-set! arg false true))
 
 
 
 (defn stop [state flag] 
-  (setFlagTrue flag)	
+  (set-flag-true! flag)	
   state)
 
 (defn dequeue! [queue ag]
@@ -132,12 +132,12 @@
 
 
 
-(defn runPagLinkExtraction
-  ([] (doseq [a agents-pag] (runPagLinkExtraction a)))
+(defn run-pag-link-extraction
+  ([] (doseq [a agents-pag] (run-pag-link-extraction a)))
   ([a] ((run-agents agents-pag) a)))
 
-(defn runRecipeLinkExtraction
-  ([] (doseq [a agents-search] (runRecipeLinkExtraction a)))
+(defn run-recipe-link-extraction
+  ([] (doseq [a agents-search] (run-recipe-link-extraction a)))
   ([a] ((run-agents agents-search) a)))
 
 ; start 2
@@ -146,7 +146,7 @@
     (doseq [url links-recipes]
       (.put url-queue2 url))
     {::t ::getUrlSearch :queue url-queue1}
-    (finally (runRecipeLinkExtraction *agent*))))
+    (finally (run-recipe-link-extraction *agent*))))
 
 (defn process-search [{:keys [content]}]
   (try
@@ -154,7 +154,7 @@
           articles (html/select html-content [:ul.search_results :li])]
       {::t ::handleResultsSearch
        :links-recipes (utile/get-links articles)})
-    (finally (runRecipeLinkExtraction *agent*))))
+    (finally (run-recipe-link-extraction *agent*))))
 
 (defn get-url-search [{:keys [queue] :as state}]
   (if (= @flag1 true) 
@@ -168,23 +168,23 @@
            ::t ::processSearch})
         (catch Exception e
           state)
-        (finally (runRecipeLinkExtraction *agent*))))))
+        (finally (run-recipe-link-extraction *agent*))))))
 
 ;end 2
 
 
-(defn prepareLink [link] 
+(defn prepare-link [link] 
   (str "http://www.w3.org/2012/pyMicrodata/extract?format=json&uri=" link))
 
 
 
-(defn runRecipesExtraction
-  ([] (doseq [a agents] (runRecipesExtraction a)))
+(defn run-recipes-extraction
+  ([] (doseq [a agents] (run-recipes-extraction a)))
   ([a] ((run-agents agents) a)))
 
 (defn store-results [url recipe usersRating]
   (swap! crawled-urls conj url)
-  (db/addRecipe recipe)
+  (db/add-recipe recipe)
   (swap! users (partial merge-with concat) usersRating))
 
 ; start 3
@@ -194,19 +194,19 @@
       (store-results url recipe usersRating))
     {::t ::getUrlRecipe
      :queue url-queue2}
-    (finally (runRecipesExtraction *agent*))))
+    (finally (run-recipes-extraction *agent*))))
 
 
 (defn process [{:keys [content pageContent url]}]
   (try
     (let [html-content (html/html-resource (java.io.StringReader. pageContent))
           id (ObjectId.)
-          recipe (utile/processData content @ingredient-categories)]
+          recipe (utile/process-data content @ingredient-categories)]
       {:url url
        ::t ::handleResultsRecipe
        :usersRating (utile/get-rating (utile/get-rating-div html-content) (.toString id)) 
        :recipe (assoc recipe :_id id)})
-    (finally (runRecipesExtraction *agent*))))
+    (finally (run-recipes-extraction *agent*))))
 
 
 (defn  get-url [{:keys [^BlockingQueue queue] :as state}]
@@ -221,38 +221,38 @@
               {::t ::getUrlRecipe
                :queue queue}
               {:url url
-               :content (slurp (prepareLink url))
+               :content (slurp (prepare-link url))
                :pageContent (slurp url)
                ::t ::processRecipe})))
         (catch Exception e
           state)
-        (finally (runRecipesExtraction *agent*))))))
+        (finally (run-recipes-extraction *agent*))))))
 ; end 3
 
-(defn prepareUsersForDB [users] 
+(defn prepare-users-for-db [users] 
   (reduce (fn [l x] (conj l {:username (key x) :recipeRatings (into {} (val x))} )) '() users))
 
-(defn prepareDB [ingrs]
-  (db/formatDB)
-  (db/insertIngredients ingrs)) 
+(defn prepare-db [ingrs]
+  (db/format-db)
+  (db/insert-ingredients ingrs)) 
 
-(defn runScraper []
+(defn run-scraper []
   (db/db-init)
-  (prepareDB ingrs) 
+  (prepare-db ingrs) 
   
-  (compare-and-set! urls '() (readUrls))
+  (compare-and-set! urls '() (read-urls))
   (compare-and-set! ingredient-categories '() (mc/find-maps "ingredient"))
   (Thread/sleep 2000)
   (println (count @ingredient-categories))
   (println (count @urls)) 
-  (runPagLinkExtraction)
-  (runRecipeLinkExtraction) 
+  (run-pag-link-extraction)
+  (run-recipe-link-extraction) 
   (Thread/sleep 20000)
   (.put url-queue1 "END") 
-  (runRecipesExtraction) 
+  (run-recipes-extraction) 
   (Thread/sleep 100000)
   (.put url-queue2 "END")
-  (Thread/sleep 230000)
+  (Thread/sleep 330000)
   ;(doseq [a agents] (println (agent-error a)))
   (doseq [a agents] (utile/pause a))
   (println  url-queue1)
@@ -260,28 +260,11 @@
   (println "2" (.size url-queue2))
   (println "users: " (count @users))
   (println "recipes: " (count @crawled-urls))
-  (doseq [u (prepareUsersForDB (filter #(> (count (val %)) 2) @users))] 
-    (db/addUser u))
+  (doseq [u (prepare-users-for-db (filter #(> (count (val %)) 2) @users))] 
+    (db/add-user u))
   (println "finished"))
 
-;(defn runCrawler []
-  ;(def urls (atom (readUrls)))
-  ;(println (count @urls)) 
 
-  ;(runPagLinkExtraction)
- ; (runRecipeLinkExtraction) 
- ; (Thread/sleep 20000)
-  ;(.put url-queue1 "END") 
-  ;(Thread/sleep 20000)
- ; (println (count @urls))
-  
-  ;(println url-queue1)
-;(println "url-queue1" (.size url-queue1))
-  ;(println "url-queue2" (.size url-queue2))
-  ;(doseq [a agents-search] (utile/pause a))
-  ;(doseq [a agents-search]
-    ;(println (utile/paused? a)))
- ; )
 
 (defn -main [& args]
-  (runScraper))
+  (run-scraper))

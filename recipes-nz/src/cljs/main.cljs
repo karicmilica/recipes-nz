@@ -10,34 +10,34 @@
     (text ($ :.arating) (:average result))
     (.setAttribute el "style" (:width result))))
 
-(defn push-reciperate [rate]
+(defn push-recipe-rating [rate]
   (let [$r ($ :#recipeId)] 
-    (fm/remote (rateRecipe (val $r) rate) [result]
+    (fm/remote (rate-recipe (val $r) rate) [result]
       (display-result result))))
 
 
 (bind ($ :.one-star)
   :click
   (fn [e] 
-    (push-reciperate 1)))
+    (push-recipe-rating 1)))
 
 (bind ($ :.two-stars)
   :click
   (fn [e] 
-    (push-reciperate 2)))
+    (push-recipe-rating 2)))
 
 (bind ($ :.three-stars)
   :click
   (fn [e] 
-    (push-reciperate 3)))
+    (push-recipe-rating 3)))
 
 (bind ($ :.four-stars)
   :click
   (fn [e] 
-    (push-reciperate 4)))
+    (push-recipe-rating 4)))
 
 (bind ($ :.five-stars)
   :click
   (fn [e] 
-    (push-reciperate 5)))
+    (push-recipe-rating 5)))
 
