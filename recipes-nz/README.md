@@ -40,11 +40,11 @@ writing.
 
 ### Literature
 
- - HTML templating: https://github.com/cgrand/enlive/wiki/Table-and-Layout-Tutorial%2C-Part-1%3A-The-Goal (views.views)
- - Scraping: https://github.com/swannodette/enlive-tutorial (util.util-extraction, extraction.recipe-extractor)
- - ClojureScript: https://github.com/bahmanm/clojure-web-ajax-sample (cljs.main, server.server)
- - Web framework: http://www.webnoir.org/ (server.server)
- - Monger: http://clojuremongodb.info/articles/getting_started.html (db.db)
+ - HTML templating: https://github.com/cgrand/enlive/wiki/Table-and-Layout-Tutorial%2C-Part-1%3A-The-Goal (recipes-nz.views.views)
+ - Scraping: https://github.com/swannodette/enlive-tutorial (recipes-nz.utils.util-extraction, recipes-nz.extraction.recipe-extractor)
+ - ClojureScript: https://github.com/bahmanm/clojure-web-ajax-sample (recipes-nz.cljs.main, recipes-nz.server.server)
+ - Web framework: http://www.webnoir.org/ (recipes-nz.server.server)
+ - Monger: http://clojuremongodb.info/articles/getting_started.html (recipes-nz.db.db)
  - MongoDB schema design: http://www.10gen.com/presentations/schema-design-basics-1
   
 ## License
