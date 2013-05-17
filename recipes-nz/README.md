@@ -19,9 +19,9 @@ their rated recipes.
 If a user is not logged in, he/she can only search recipes by ingredient. 
 
 - to compile clojurescript, launch lein cljsbuild once from the terminal
-- to fill database with recipes, set :main to extraction.recipe-extractor in project.clj and
+- to fill database with recipes, set :main to recipes-nz.extraction.recipe-extractor in project.clj and
   launch lein run from the terminal
-- to start web-application set :main to server.server in project.clj and launch lein run from
+- to start web-application set :main to recipes-nz.server.server in project.clj and launch lein run from
   the terminal
 
 ##### Goal
