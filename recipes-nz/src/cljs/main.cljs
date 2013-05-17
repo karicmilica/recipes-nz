@@ -10,9 +10,9 @@
     (text ($ :.arating) (:average result))
     (.setAttribute el "style" (:width result))))
 
-(defn push-recipe-rating [rate]
+(defn push-recipe-rating [rating]
   (let [$r ($ :#recipeId)] 
-    (fm/remote (rate-recipe (val $r) rate) [result]
+    (fm/remote (rate-recipe (val $r) rating) [result]
       (display-result result))))
 
 
