@@ -1,4 +1,4 @@
-(ns cljs.main
+(ns recipes-nz.cljs.main
 (:require [fetch.remotes])
   (:use [jayq.core :only [$ delegate append data bind val text]])
   (:require-macros [fetch.macros :as fm]))

@@ -1,6 +1,6 @@
-(ns recommendation.recommendation
-  (:require [recommendation.similarity :as sim]
-            [db.db :as db]))
+(ns recipes-nz.recommendation.recommendation
+  (:require [recipes-nz.recommendation.similarity :as sim]
+            [recipes-nz.db.db :as db]))
 
 
 (defn similarities [prefs user sim-algo]

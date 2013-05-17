@@ -1,6 +1,6 @@
-(ns utils.core-test
+(ns recipes-nz.utils.core-test
   (:use clojure.test
-        utils.util))
+        recipes-nz.utils.util))
 
 
 

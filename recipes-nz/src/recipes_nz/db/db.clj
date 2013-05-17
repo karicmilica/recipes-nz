@@ -1,7 +1,6 @@
-(ns db.db
+(ns recipes-nz.db.db
   (:require [monger.core :as mg]
-            [monger.collection :as mc]
-            [utils.util :as util])
+            [monger.collection :as mc])
   (:use [monger.operators])
   (:import (org.bson.types ObjectId)))
 

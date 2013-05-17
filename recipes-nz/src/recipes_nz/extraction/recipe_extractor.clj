@@ -1,9 +1,8 @@
-(ns extraction.recipe-extractor
+(ns recipes-nz.extraction.recipe-extractor
   (:require 
            [net.cgrand.enlive-html :as html]
-           [monger.collection :as mc]
-           [utils.util-extraction :as utile]
-           [db.db :as db])
+           [recipes-nz.utils.util-extraction :as utile]
+           [recipes-nz.db.db :as db])
   (:use [clojure.java.io :only [reader]])
   (:import (org.bson.types ObjectId))
   (:import (java.util.concurrent LinkedBlockingQueue BlockingQueue)))
@@ -241,7 +240,7 @@
   (prepare-db ingrs) 
   
   (compare-and-set! urls '() (read-urls))
-  (compare-and-set! ingredient-categories '() (mc/find-maps "ingredient"))
+  (compare-and-set! ingredient-categories '() (db/get-ingredient-categories))
   (Thread/sleep 2000)
   (println (count @ingredient-categories))
   (println (count @urls)) 

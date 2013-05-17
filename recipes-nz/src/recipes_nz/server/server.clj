@@ -1,13 +1,13 @@
-(ns server.server
-  (:require [db.db :as db]
+(ns recipes-nz.server.server
+  (:require [recipes-nz.db.db :as db]
             [noir.server :as server]
             [noir.session :as session]
             [noir.response :as resp]
             [noir.fetch.remotes :as remote]
-            [views.views :as views]
+            [recipes-nz.views.views :as views]
             [noir.core :refer [defpage defpartial]]
-            [utils.util :as util]
-            [recommendation.recommendation :as rc])
+            [recipes-nz.utils.util :as util]
+            [recipes-nz.recommendation.recommendation :as rc])
   (:import (org.bson.types ObjectId)))
 
 (def first-ingridient-id (atom ""))

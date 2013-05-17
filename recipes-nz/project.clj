@@ -17,11 +17,11 @@
   :cljsbuild {:builds
               [{:builds nil,
                 :jar true
-                :source-path "src/cljs"
+                :source-path "src/recipes_nz/cljs"
                 :compiler {:output-dir "resources/public/js/"
                            :output-to "resources/public/js/main.js"
                            :optimization :simple
                            :pretty-print true}}]}
-  :main server.server
-  ;:main extraction.recipe-extractor
+  :main recipes-nz.server.server
+  ;:main recipes-nz.extraction.recipe-extractor
 )

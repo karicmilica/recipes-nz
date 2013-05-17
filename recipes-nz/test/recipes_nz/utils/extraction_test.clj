@@ -1,6 +1,6 @@
-(ns utils.extraction-test
+(ns recipes-nz.utils.extraction-test
   (:use clojure.test
-        utils.util-extraction))
+        recipes-nz.utils.util-extraction))
 
 
 
@@ -35,7 +35,7 @@
   (testing "FIXME, I fail."
            (let [a (agent 4)]
              (pause a)
-             (is (= (:utils.util-extraction/paused (meta a)) true)))))
+             (is (= (:recipes-nz.utils.util-extraction/paused (meta a)) true)))))
 
 
 (deftest test-get-ratings

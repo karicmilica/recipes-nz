@@ -1,7 +1,7 @@
-(ns utils.util-extraction
+(ns recipes-nz.utils.util-extraction
   (:require [clojure.data.json :as json]
             [net.cgrand.enlive-html :as html]
-            [utils.util :as util]))
+            [recipes-nz.utils.util :as util]))
 
 (defn get-links [articles] 
   (map (fn [x] (:href (:attrs (first (html/select x [:a]))))) articles))

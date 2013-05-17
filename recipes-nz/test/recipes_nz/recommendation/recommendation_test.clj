@@ -1,7 +1,7 @@
-(ns recommendation.recommendation-test
+(ns recipes-nz.recommendation.recommendation-test
   (:use clojure.test
-        utils.util
-        recommendation.similarity))
+        recipes-nz.utils.util
+        recipes-nz.recommendation.similarity))
 
 
 (deftest test-euclidean

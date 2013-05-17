@@ -1,4 +1,4 @@
-(ns recommendation.similarity)
+(ns recipes-nz.recommendation.similarity)
 
 (defn euclidean [user1-prefs user2-prefs]
   (let [shared-items (filter user1-prefs (keys user2-prefs))
