@@ -37,6 +37,15 @@ multimethods; and of course map and reduce function that are present everywhere.
 problems with compiling ClojureScript, and finding appropriate documentations. Developing this application
 I had opportunity to experience one new and efficient approach in considering the problems,thinking and code
 writing.  
+
+### Literature
+
+ - HTML templating: https://github.com/cgrand/enlive/wiki/Table-and-Layout-Tutorial%2C-Part-1%3A-The-Goal (views.views)
+ - Scraping: https://github.com/swannodette/enlive-tutorial (util.util-extraction, extraction.recipe-extractor)
+ - ClojureScript: https://github.com/bahmanm/clojure-web-ajax-sample (cljs.main, server.server)
+ - Web framework: http://www.webnoir.org/ (server.server)
+ - Monger: http://clojuremongodb.info/articles/getting_started.html (db.db)
+ - MongoDB schema design: http://www.10gen.com/presentations/schema-design-basics-1
   
 ## License
 
