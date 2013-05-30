@@ -1,6 +1,6 @@
 # recipes-nz
 
-An application written in Clojure and using ClojureScript, Noir, Enlive and Monger libraries.
+An application written in Clojure and ClojureScript, using Noir, Enlive, data.json, Monger, fetch, crate and jayq libraries.
 
 Main functionalities:
  1. filling database with the recipes and their ratings 
@@ -20,13 +20,18 @@ If a user is not logged in, he/she can only search recipes by ingredient.
 
 ##### Usage
 
-It's necessary to start MongoDB before running the application.
+It's necessary to start MongoDB before running the application. Database used in this project is MongoDB 2.2.3 
+(to download, visit http://www.mongodb.org/downloads). To start database open command line, navigate to mongodb/bin
+folder, and then execute mongod.exe (on windows). For more detailed instructions on how to start MongoDB,
+see http://docs.mongodb.org/manual/installation/.
 
-- to compile clojurescript, launch lein cljsbuild once from the terminal
-- to fill database with recipes, set :main to recipes-nz.extraction.recipe-extractor in project.clj and
-  launch lein run from the terminal
-- to start web-application set :main to recipes-nz.server.server in project.clj and launch lein run from
-  the terminal
+To start application, open command line, navigate to the application folder and then:  
+
+- to compile clojurescript, launch *lein cljsbuild once* from the command line
+- to fill database with the recipes, set :main to **recipes-nz.extraction.recipe-extractor** in project.clj,
+  launch *lein run* from the command line and after a few minutes when you see *finished* close the application
+- to start web-application set :main to **recipes-nz.server.server** in project.clj, launch *lein run* from
+  the command line and type http://localhost:8080/login in your browser address bar
 
 ##### Goal
 
@@ -42,7 +47,7 @@ problems with compiling ClojureScript, and finding appropriate documentations. D
 I had opportunity to experience one new and efficient approach in considering the problems,thinking and code
 writing.  
 
-### Literature
+### References
 
  - HTML templating: https://github.com/cgrand/enlive/wiki/Table-and-Layout-Tutorial%2C-Part-1%3A-The-Goal (recipes-nz.views.views)
  - Scraping: https://github.com/swannodette/enlive-tutorial (recipes-nz.utils.util-extraction, recipes-nz.extraction.recipe-extractor)
