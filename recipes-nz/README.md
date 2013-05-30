@@ -31,7 +31,7 @@ To start application, open command line, navigate to the application folder and 
 - to fill database with the recipes, set :main to **recipes-nz.extraction.recipe-extractor** in project.clj,
   launch *lein run* from the command line and after a few minutes when you see *finished* close the application
 - to start web-application set :main to **recipes-nz.server.server** in project.clj, launch *lein run* from
-  the command line and type http://localhost:8080/login in your browser address bar
+  the command line and type <http://localhost:8080/login> in your browser address bar
 
 ##### Goal
 
